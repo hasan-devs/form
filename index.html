@@ -31,10 +31,12 @@
     <!-- Include Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // Initialize Supabase
         const supabaseUrl = 'https://kxxapucmizjwjcutxiav.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4eGFwdWNtaXpqd2pjdXR4aWF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc3NDEyMDQsImV4cCI6MjA1MzMxNzIwNH0.Y-QLqVk4EQb87T6bl7EMwMjQlqb6lBUsu13UzmjLw0g';
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
+        // Form submission handler
         document.getElementById('contactForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -42,18 +44,23 @@
             const email = document.getElementById('email').value;
             const message = document.getElementById('message').value;
 
-            const { data, error } = await supabase
-                .from('form_submissions')
-                .insert([{ name, email, message }]);
+            try {
+                const { data, error } = await supabase
+                    .from('form_submissions')
+                    .insert([{ name, email, message }]);
 
-            const messageDiv = document.getElementById('messageDiv');
-            if (error) {
-                messageDiv.innerHTML = `Error: ${error.message}`;
-                messageDiv.style.color = 'red';
-            } else {
-                messageDiv.innerHTML = 'Submission successful!';
-                messageDiv.style.color = 'green';
-                document.getElementById('contactForm').reset();
+                const messageDiv = document.getElementById('messageDiv');
+                if (error) {
+                    messageDiv.innerHTML = `Error: ${error.message}`;
+                    messageDiv.style.color = 'red';
+                } else {
+                    messageDiv.innerHTML = 'Submission successful!';
+                    messageDiv.style.color = 'green';
+                    document.getElementById('contactForm').reset();
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                document.getElementById('messageDiv').innerHTML = 'An error occurred. Please try again.';
             }
         });
     </script>
